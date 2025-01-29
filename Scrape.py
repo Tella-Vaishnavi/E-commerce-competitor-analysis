@@ -11,10 +11,10 @@ from selenium.webdriver.support.wait import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
 links = {
-    "Apple iPhone 15": "https://www.amazon.in/dp/B0CHX3TW6X?ref=ods_ucc_kindle_B0CHX2WQLX&th=1",
-    "Apple 2023 MacBook Pro (16-inch, Apple M3 Pro chip with 12‑core CPU and 18‑core GPU, 36GB Unified Memory, 512GB) - Silver": "https://www.amazon.in/Apple-MacBook-16-inch-12%E2%80%91core-18%E2%80%91core/dp/B0CM5Q77TT?th=1",
-    "OnePlus Nord 4 5G (Mercurial Silver, 8GB RAM, 256GB Storage)": "https://amzn.in/d/2KOJBxa",
-    "Sony WH-1000XM5 Best Active Noise Cancelling Wireless Bluetooth Over Ear Headphones with Mic for Clear Calling, up to 40 Hours Battery -Black": "https://www.amazon.in/Sony-WH-1000XM5-Wireless-Cancelling-Headphones/dp/B09XS7JWHH?th=1"
+    "Motorola razr | 2023 | Unlocked | Made for US 8/128 | 32MP Camera | Sage Green, 73.95 x 170.82 x 7.35mm amazon": "https://www.amazon.com/Motorola-Unlocked-Camera-170-82-7-35mm/dp/B0CGVXZSQJ?th=1",
+    "Moto G Power 5G | 2024 | Unlocked | Made for US 8+128GB | 50MP Camera | Pale Lilac": "https://www.amazon.com/Power-Unlocked-128GB-Camera-Lilac/dp/B0CVR23QCR?th=1",
+    "Tracfone | Motorola Moto g Play 2024 | Locked | 64GB | 5000mAh Battery | 50MP Quad Pixel Camera | 6.5-in. HD+ 90Hz Display | Sapphire Blue": "https://www.amazon.com/Tracfone-Motorola-5000mAh-Battery-Sapphire/dp/B0CTW8TXGH",
+    
 }
 
 def scrape_product_data(link):

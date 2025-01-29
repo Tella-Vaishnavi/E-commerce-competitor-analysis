@@ -9,21 +9,18 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from statsmodels.tsa.arima.model import ARIMA
 from transformers import pipeline
-import os
-
 
 st.set_page_config(page_title="E-Commerce Competitor Strategy Dashboard", layout="wide")
 
-API_KEY = "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"  # Groq API Key
+API_KEY = "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"
 
-SLACK_WEBHOOK = "https://hooks.slack.com/services/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"  # Slack webhook url
+SLACK_WEBHOOK = "https://hooks.slack.com/services/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"  # Slack webhook url
 
 def truncate_text(text, max_length=512):
     return text[:max_length]
 
 def load_competitor_data():
     """Load competitor data from a CSV file."""
-    print("Current Working Directory:", os.getcwd())
     data = pd.read_csv("competitor_data.csv")
     print(data.head())
     return data
@@ -142,29 +139,37 @@ def send_to_slack(data):
 
 def generate_strategy_recommendation(product_name, competitor_data, sentiment):
     """Generate strategic recommendations using an LLM."""
-
+    
+    # Truncate competitor data to limit token usage
+    competitor_data_summary = competitor_data.head(5)  # Only take first 5 rows for simplicity
+    competitor_data_summary = competitor_data_summary.to_string(index=False)  # Convert to string for API
+    
+    # Truncate sentiment analysis to only relevant parts
+    sentiment_summary = str(sentiment)[:512]  # Limit sentiment string to 512 characters
+    
+    # Prepare the prompt by reducing token usage
     date = datetime.now()
     prompt = f"""
-    You are a highly skilled business strategist specializing in e-commerce. Based on the following details, suggest strategic recommendations:
+    You are a skilled business strategist specializing in e-commerce. Based on the following details, suggest strategic recommendations:
 
     1. **Product Name**: {product_name}
-    2. **Competitor Data** (including current prices, discounts, and predicted discounts):
-    {competitor_data}
+    2. **Competitor Data** (prices, discounts, predicted discounts):
+    {competitor_data_summary}
     3. **Sentiment Analysis**:
-    {sentiment}
+    {sentiment_summary}
     4. **Today's Date**: {str(date)}
 
     ### Task:
     - Analyze the competitor data and identify key pricing trends.
-    - Leverage sentiment analysis insights to highlight areas where customer satisfaction can be improved.
+    - Leverage sentiment insights to suggest areas for improvement.
     """
     
-    messages = [{"role": "user", "content": prompt}]
-
+    # Request data for Groq API
     data = {
         "messages": [{"role": "user", "content": prompt}],
         "model": "llama3-8b-8192",
         "temperature": 0,
+        "max_tokens": 512  # Limit tokens returned by the model
     }
 
     headers = {
@@ -172,6 +177,7 @@ def generate_strategy_recommendation(product_name, competitor_data, sentiment):
         "Authorization": f"Bearer {API_KEY}",
     }
 
+    # Make the API request
     res = requests.post(
         "https://api.groq.com/openai/v1/chat/completions",
         data=json.dumps(data),
@@ -179,9 +185,17 @@ def generate_strategy_recommendation(product_name, competitor_data, sentiment):
     )
 
     res_json = res.json()
-    response = res_json["choices"][0]["message"]["content"]
+    print("APIsw response:", res_json)  # Check the full response for debugging
+
+    # Check if response contains the 'choices' key and return the content
+    if "choices" in res_json:
+        response = res_json["choices"][0]["message"]["content"]
+    else:
+        response = "Error: 'choices' key is missing in the response. Please check the API request."
 
     return response
+
+
 
 
 
@@ -190,10 +204,9 @@ st.title("E-Commerce Competitor Strategy Dashboard")
 st.sidebar.header("Select a Product")
 
 products = [
-    "Apple iPhone 15",
-    "Apple 2023 MacBook Pro (16-inch, Apple M3 Pro chip with 12‑core CPU and 18‑core GPU, 36GB Unified Memory, 512GB) - Silver",
-    "OnePlus Nord 4 5G (Mercurial Silver, 8GB RAM, 256GB Storage)",
-    "Sony WH-1000XM5 Best Active Noise Cancelling Wireless Bluetooth Over Ear Headphones with Mic for Clear Calling, up to 40 Hours Battery -Black",
+    "Motorola razr | 2023 | Unlocked | Made for US 8/128 | 32MP Camera | Sage Green, 73.95 x 170.82 x 7.35mm",
+    "Moto G Power 5G | 2024 | Unlocked | Made for US 8+128GB | 50MP Camera | Pale Lilac",
+    "Tracfone | Motorola Moto g Play 2024 | Locked | 64GB | 5000mAh Battery | 50MP Quad Pixel Camera | 6.5-in. HD+ 90Hz Display | Sapphire Blue",
     "Samsung Galaxy S24 Ultra Cell Phone, 512GB AI Smartphone, Unlocked Android, 200MP, 100x Zoom Cameras, Fast Processor, Long Battery Life, Edge-to-Edge Display, S Pen, US Version, 2024, Titanium Black"
 ]
 
