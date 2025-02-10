@@ -21,14 +21,14 @@ def truncate_text(text, max_length=512):
 
 def load_competitor_data():
     """Load competitor data from a CSV file."""
-    data = pd.read_csv("competitor_data.csv")
+    data = pd.read_csv("E:/e-commerce-competitor-analysis/project/competitor_data.csv")
     print(data.head())
     return data
 
 
 def load_reviews_data():
     """Load reviews data from a csv file."""
-    reviews = pd.read_csv("reviews.csv")
+    reviews = pd.read_csv("E:/e-commerce-competitor-analysis/project/reviews.csv")
 
     return reviews
 
